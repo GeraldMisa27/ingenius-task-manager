@@ -1,12 +1,19 @@
-export default function HomePage() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <div className="max-w-md text-center">
-        <h1 className="text-3xl font-bold mb-2">Ingenius Task Manager</h1>
-        <p className="text-gray-600">
-          Technical challenge — work in progress.
-        </p>
-      </div>
-    </main>
-  );
+/**
+ * Root page (Server Component).
+ *
+ * Redirects authenticated users to /projects and unauthenticated users to /login.
+ * The site does not have a public landing page in this implementation.
+ */
+
+import { redirect } from "next/navigation";
+import { auth } from "@/core/auth/auth";
+
+export default async function HomePage() {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect("/projects");
+  }
+
+  redirect("/login");
 }
