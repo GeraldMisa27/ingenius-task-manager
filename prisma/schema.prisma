@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  /// EN: bcrypt digest for credential verification; never store or log plaintext passwords.
+  passwordHash  String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ownedProjects Project[]       @relation("ProjectOwner")
+  memberships   ProjectMember[]
+  assignedTasks Task[]          @relation("TaskAssignee")
+  createdTasks  Task[]          @relation("TaskCreator")
+
+  @@index([email])
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  archived    Boolean         @default(false)
+  ownerId     String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  /// EN: Restrict: cannot delete an owner who still leads projects; app must reassign or delete projects first.
+  owner       User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  members     ProjectMember[]
+  tasks       Task[]
+
+  @@index([ownerId])
+  @@index([archived])
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  joinedAt  DateTime @default(now())
+  /// EN: Cascade: removing a project cleans membership rows; avoids orphan pivot records.
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  /// EN: Cascade: deleting a user removes their memberships; task reassignment is handled in app layer before delete if needed.
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model Task {
+  id         String       @id @default(cuid())
+  name       String
+  status     TaskStatus   @default(PENDING)
+  priority   TaskPriority @default(MEDIUM)
+  projectId  String
+  assigneeId String
+  creatorId  String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  /// EN: Cascade: deleting a project removes its tasks; project is the aggregate root for task lifecycle.
+  project    Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  /// EN: Restrict: cannot delete a user who is still assignee; forces reassignment or task deletion first.
+  assignee   User         @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
+  /// EN: Restrict: same as assignee; preserves audit semantics if creator is ever surfaced separately.
+  creator    User         @relation("TaskCreator", fields: [creatorId], references: [id], onDelete: Restrict)
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+}
+
+/// EN: Task lifecycle states are fixed by product rules; enum maps 1:1 to domain and Zod enums.
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// EN: Priority is a closed vocabulary; enum prevents invalid values and matches application enums.
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
