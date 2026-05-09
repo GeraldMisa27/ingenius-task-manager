@@ -4,6 +4,7 @@
  */
 import { z } from "zod";
 import { cuidId } from "@/shared/validation/helpers";
+import { EMAIL_MAX_LEN } from "@/shared/validation/limits";
 
 export const addMemberSchema = z.object({
   projectId: cuidId("ID de proyecto inválido"),
@@ -11,6 +12,7 @@ export const addMemberSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
+    .max(EMAIL_MAX_LEN, "El correo no puede superar 254 caracteres")
     .pipe(z.email("Correo electrónico inválido")),
 });
 

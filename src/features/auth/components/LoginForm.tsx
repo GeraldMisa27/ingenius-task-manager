@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { loginSchema, type LoginInput } from "@/features/auth/validation";
+import { EMAIL_MAX_LEN, PASSWORD_MAX_LEN } from "@/shared/validation/limits";
 
 export function LoginForm() {
   const router = useRouter();
@@ -60,6 +61,9 @@ export function LoginForm() {
           id="email"
           type="email"
           placeholder="tu@correo.com"
+          autoComplete="email"
+          required
+          maxLength={EMAIL_MAX_LEN}
           {...register("email")}
           disabled={isSubmitting}
         />
@@ -73,6 +77,10 @@ export function LoginForm() {
         <Input
           id="password"
           type="password"
+          autoComplete="current-password"
+          required
+          minLength={1}
+          maxLength={PASSWORD_MAX_LEN}
           {...register("password")}
           disabled={isSubmitting}
         />

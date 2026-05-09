@@ -25,6 +25,11 @@ import {
   updateProjectSchema,
   type UpdateProjectInput,
 } from "@/features/projects/validation";
+import {
+  PROJECT_DESCRIPTION_MAX_LEN,
+  PROJECT_NAME_MAX_LEN,
+  PROJECT_NAME_MIN_LEN,
+} from "@/shared/validation/limits";
 import { updateProject } from "@/features/projects/server/actions";
 
 type EditProjectDialogProps = {
@@ -83,7 +88,15 @@ export function EditProjectDialog({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="edit-name">Nombre</Label>
-            <Input id="edit-name" {...register("name")} disabled={isPending} />
+            <Input
+              id="edit-name"
+              type="text"
+              required
+              minLength={PROJECT_NAME_MIN_LEN}
+              maxLength={PROJECT_NAME_MAX_LEN}
+              {...register("name")}
+              disabled={isPending}
+            />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
@@ -93,6 +106,7 @@ export function EditProjectDialog({
             <Textarea
               id="edit-description"
               rows={3}
+              maxLength={PROJECT_DESCRIPTION_MAX_LEN}
               {...register("description")}
               disabled={isPending}
             />

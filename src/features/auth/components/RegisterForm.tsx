@@ -16,6 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { registerSchema, type RegisterInput } from "@/features/auth/validation";
+import {
+  EMAIL_MAX_LEN,
+  PASSWORD_MAX_LEN,
+  PASSWORD_MIN_LEN,
+  USER_REGISTER_NAME_MAX_LEN,
+  USER_REGISTER_NAME_MIN_LEN,
+} from "@/shared/validation/limits";
 import { registerUser } from "@/features/auth/server/actions";
 
 export function RegisterForm() {
@@ -55,6 +62,10 @@ export function RegisterForm() {
           id="name"
           type="text"
           placeholder="Tu nombre"
+          autoComplete="name"
+          required
+          minLength={USER_REGISTER_NAME_MIN_LEN}
+          maxLength={USER_REGISTER_NAME_MAX_LEN}
           {...register("name")}
           disabled={isSubmitting}
         />
@@ -69,6 +80,9 @@ export function RegisterForm() {
           id="email"
           type="email"
           placeholder="tu@correo.com"
+          autoComplete="email"
+          required
+          maxLength={EMAIL_MAX_LEN}
           {...register("email")}
           disabled={isSubmitting}
         />
@@ -82,6 +96,10 @@ export function RegisterForm() {
         <Input
           id="password"
           type="password"
+          autoComplete="new-password"
+          required
+          minLength={PASSWORD_MIN_LEN}
+          maxLength={PASSWORD_MAX_LEN}
           {...register("password")}
           disabled={isSubmitting}
         />

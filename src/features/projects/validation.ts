@@ -4,17 +4,31 @@
  */
 import { z } from "zod";
 import { cuidId } from "@/shared/validation/helpers";
+import {
+  PROJECT_DESCRIPTION_MAX_LEN,
+  PROJECT_NAME_MAX_LEN,
+  PROJECT_NAME_MIN_LEN,
+} from "@/shared/validation/limits";
 
 export const createProjectSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, "El nombre debe tener al menos 3 caracteres")
-    .max(80, "El nombre no puede superar 80 caracteres"),
+    .min(
+      PROJECT_NAME_MIN_LEN,
+      "El nombre debe tener al menos 3 caracteres",
+    )
+    .max(
+      PROJECT_NAME_MAX_LEN,
+      "El nombre no puede superar 80 caracteres",
+    ),
   description: z
     .string()
     .trim()
-    .max(500, "La descripción no puede superar 500 caracteres")
+    .max(
+      PROJECT_DESCRIPTION_MAX_LEN,
+      "La descripción no puede superar 500 caracteres",
+    )
     .optional()
     .or(z.literal("")),
 });

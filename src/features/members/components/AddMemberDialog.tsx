@@ -27,6 +27,7 @@ import {
   type AddMemberInput,
 } from "@/features/members/validation";
 import { addMember } from "@/features/members/server/actions";
+import { EMAIL_MAX_LEN } from "@/shared/validation/limits";
 
 type AddMemberDialogProps = {
   projectId: string;
@@ -85,6 +86,9 @@ export function AddMemberDialog({ projectId }: AddMemberDialogProps) {
               id="member-email"
               type="email"
               placeholder="usuario@correo.com"
+              autoComplete="email"
+              required
+              maxLength={EMAIL_MAX_LEN}
               {...register("userEmail")}
               disabled={isPending}
             />

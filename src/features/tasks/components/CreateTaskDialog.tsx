@@ -35,6 +35,7 @@ import {
   TaskPriorityEnum,
 } from "@/features/tasks/validation";
 import { createTask } from "@/features/tasks/server/actions";
+import { TASK_NAME_MAX_LEN, TASK_NAME_MIN_LEN } from "@/shared/validation/limits";
 import type { TaskPriority } from "@/generated/prisma";
 
 type CreateTaskFormValues = z.input<typeof createTaskSchema>;
@@ -106,7 +107,12 @@ export function CreateTaskDialog({ projectId }: CreateTaskDialogProps) {
             <Label htmlFor="task-name">Nombre</Label>
             <Input
               id="task-name"
+              type="text"
               placeholder="Describe la tarea"
+              autoComplete="off"
+              required
+              minLength={TASK_NAME_MIN_LEN}
+              maxLength={TASK_NAME_MAX_LEN}
               {...register("name")}
               disabled={isPending}
             />

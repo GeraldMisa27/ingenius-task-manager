@@ -27,6 +27,11 @@ import {
   createProjectSchema,
   type CreateProjectInput,
 } from "@/features/projects/validation";
+import {
+  PROJECT_DESCRIPTION_MAX_LEN,
+  PROJECT_NAME_MAX_LEN,
+  PROJECT_NAME_MIN_LEN,
+} from "@/shared/validation/limits";
 import { createProject } from "@/features/projects/server/actions";
 
 export function CreateProjectDialog() {
@@ -79,7 +84,12 @@ export function CreateProjectDialog() {
             <Label htmlFor="create-name">Nombre</Label>
             <Input
               id="create-name"
+              type="text"
               placeholder="Mi nuevo proyecto"
+              autoComplete="off"
+              required
+              minLength={PROJECT_NAME_MIN_LEN}
+              maxLength={PROJECT_NAME_MAX_LEN}
               {...register("name")}
               disabled={isPending}
             />
@@ -93,6 +103,7 @@ export function CreateProjectDialog() {
               id="create-description"
               rows={3}
               placeholder="Describe brevemente el objetivo del proyecto"
+              maxLength={PROJECT_DESCRIPTION_MAX_LEN}
               {...register("description")}
               disabled={isPending}
             />
