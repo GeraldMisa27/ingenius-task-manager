@@ -31,25 +31,32 @@ export function ProjectCard({ project, currentUserId }: ProjectCardProps) {
   const isOwner = project.ownerId === currentUserId;
 
   return (
-    <Card className="relative transition-shadow hover:shadow-md">
-      <CardHeader className="pb-3">
+    <Card className="relative group transition-all hover:shadow-md hover:border-slate-300">
+      <Link
+        href={`/projects/${project.id}`}
+        className="absolute inset-0 z-0"
+        aria-label={`Ver detalle de ${project.name}`}
+      />
+      <CardHeader className="pb-3 relative z-10 pointer-events-none">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 min-w-0 flex-1">
-            <CardTitle className="text-base truncate">
-              <Link href={`/projects/${project.id}`} className="hover:underline">
-                {project.name}
-              </Link>
+            <CardTitle className="text-base truncate group-hover:text-primary transition-colors">
+              {project.name}
             </CardTitle>
             <div className="flex items-center gap-2">
               {project.archived && <Badge variant="secondary">Archivado</Badge>}
               {isOwner && <Badge variant="outline">Jefe</Badge>}
             </div>
           </div>
-          {isOwner && <ProjectActionsMenu project={project} />}
+          {isOwner && (
+            <div className="relative z-20 pointer-events-auto">
+              <ProjectActionsMenu project={project} />
+            </div>
+          )}
         </div>
       </CardHeader>
       {project.description && (
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 relative z-10 pointer-events-none">
           <CardDescription className="line-clamp-2">
             {project.description}
           </CardDescription>
